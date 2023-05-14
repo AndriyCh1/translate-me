@@ -6,7 +6,7 @@ const mockExercisesData = [
   { id: "83487348", title: "t2", description: "d2", image: null },
 ];
 
-const Exercises = () => {
+const ExerciseList = () => {
   return (
     <Container maxWidth="xl">
       <List>
@@ -18,4 +18,4 @@ const Exercises = () => {
   );
 };
 
-export default Exercises;
+export default ExerciseList;
