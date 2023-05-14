@@ -20,10 +20,11 @@ const pages = [
   { display: "Stored", route: AppRoute.STORED },
 ];
 
-const StyledLink = styled(Link)(() => ({
-  color: "#ffffff",
+const StyledLink = styled(Link)(({ theme }) => ({
+  color: theme.palette.text.primary,
   textDecoration: "none",
   margin: "5px",
+  fontWeight: 500,
 }));
 
 const Navbar = () => {
@@ -38,7 +39,10 @@ const Navbar = () => {
   };
 
   return (
-    <AppBar position="static">
+    <AppBar
+      position="static"
+      sx={{ backgroundColor: "background.paper", boxShadow: "none" }}
+    >
       <Container maxWidth="xl">
         <CssBaseline />
         <Toolbar disableGutters sx={{ padding: 0, margin: 0 }}>
@@ -74,7 +78,7 @@ const Navbar = () => {
               {pages.map((page, index) => (
                 <MenuItem key={index} onClick={handleCloseNavMenu}>
                   <Typography textAlign="center">
-                    <StyledLink to={page.route} sx={{ color: "black" }}>
+                    <StyledLink to={page.route} sx={{ color: "text.primary" }}>
                       {page.display}
                     </StyledLink>
                   </Typography>
