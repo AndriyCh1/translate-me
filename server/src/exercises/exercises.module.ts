@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Exercise, ExerciseSchema } from './exercise.schema';
 import ExercisesController from './exercises.controller';
+import ExercisesService from './exercises.service';
 
 @Module({
   imports: [
@@ -10,7 +11,7 @@ import ExercisesController from './exercises.controller';
     ]),
   ],
   controllers: [ExercisesController],
-  providers: [],
+  providers: [ExercisesService],
   exports: [],
 })
 class ExercisesModule {}
