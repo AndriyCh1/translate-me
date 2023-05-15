@@ -4,9 +4,11 @@ import { ThemeProvider } from "@mui/material";
 import { theme } from "../styles/theme";
 
 import { AppRoute } from "../common/enums";
+
 import Navbar from "./common/navbar/navbar";
 import ExerciseList from "./exercise-list/exercise-list";
 import Exercise from "./exercise/exercise";
+import Constructor from "./constructor/constructor";
 
 const App: React.FC = ({}) => {
   return (
@@ -16,6 +18,7 @@ const App: React.FC = ({}) => {
         <Route path={AppRoute.ANY} element={<ExerciseList />} />
         <Route path={AppRoute.EXERCISES} element={<ExerciseList />} />
         <Route path={AppRoute.EXERCISE_$ID} element={<Exercise />} />
+        <Route path={AppRoute.CONSTRUCTOR} element={<Constructor />} />
       </Routes>
     </ThemeProvider>
   );
