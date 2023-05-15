@@ -21,7 +21,7 @@ const pages = [
 ];
 
 const StyledLink = styled(Link)(({ theme }) => ({
-  color: theme.palette.text.primary,
+  color: theme.palette.text.secondary,
   textDecoration: "none",
   margin: "5px",
   fontWeight: 500,
@@ -41,9 +41,12 @@ const Navbar = () => {
   return (
     <AppBar
       position="static"
-      sx={{ backgroundColor: "background.paper", boxShadow: "none" }}
+      sx={{
+        backgroundColor: "background.paper",
+        boxShadow: "none",
+      }}
     >
-      <Container maxWidth="xl">
+      <Container maxWidth="lg">
         <CssBaseline />
         <Toolbar disableGutters sx={{ padding: 0, margin: 0 }}>
           <Box sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}>
@@ -78,7 +81,10 @@ const Navbar = () => {
               {pages.map((page, index) => (
                 <MenuItem key={index} onClick={handleCloseNavMenu}>
                   <Typography textAlign="center">
-                    <StyledLink to={page.route} sx={{ color: "text.primary" }}>
+                    <StyledLink
+                      to={page.route}
+                      sx={{ color: "text.secondary" }}
+                    >
                       {page.display}
                     </StyledLink>
                   </Typography>

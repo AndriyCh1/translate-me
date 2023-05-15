@@ -6,8 +6,8 @@ const Exercise: React.FC = ({}) => {
   const { id } = useParams();
 
   return (
-    <Container maxWidth="xl">
-      <Box sx={{ color: "text.secondary", padding: 1 }}>{id}</Box>
+    <Container maxWidth="lg">
+      <Box sx={{ padding: 1 }}>{id}</Box>
     </Container>
   );
 };

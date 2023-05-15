@@ -8,7 +8,7 @@ const mockExercisesData = [
 
 const ExerciseList = () => {
   return (
-    <Container maxWidth="xl">
+    <Container maxWidth="lg">
       <List>
         {mockExercisesData.map((exercise) => (
           <ExerciseCard key={exercise.id} {...exercise} />
