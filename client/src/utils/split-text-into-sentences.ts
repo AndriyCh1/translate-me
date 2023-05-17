@@ -1,3 +1,3 @@
-export function splitTextIntoSentences(text: string): string[] {
-  return text.trim().split(/(?<=\.|\?|)\s+/);
-}
+export const splitTextIntoSentences = (text: string): string[] => {
+  return text.trim().split(/(?<=\.|\?|\!)\s+/);
+};

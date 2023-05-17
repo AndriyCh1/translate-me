@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { FormEvent, useState } from "react";
 import {
   Box,
   Button,
@@ -13,6 +13,8 @@ import VerticalSplitIcon from "@mui/icons-material/VerticalSplit";
 
 import SentenceInput from "./sentence-input/sentence-input";
 import { splitTextIntoSentences } from "../../utils/split-text-into-sentences";
+import { ISentenceData } from "./common/interfaces";
+import { generateUniqueId } from "../../utils/generate-unique-id";
 
 const DEFAULT_TEXT_ROWS_NUMBER = 10;
 const LESS_TEXT_ROWS_NUMBER = 3;
@@ -21,7 +23,7 @@ const LESS_TEXT_ROWS_NUMBER = 3;
 const Constructor: React.FC = () => {
   const [showLessText, setShowLessText] = useState(false);
   const [text, setText] = useState("");
-  const [sentences, setSentences] = useState<string[] | null>();
+  const [sentences, setSentences] = useState<ISentenceData[]>([]);
 
   const handleShowLessButtonClick = () => {
     setShowLessText((value) => !value);
@@ -32,16 +34,60 @@ const Constructor: React.FC = () => {
 
   const handleConvertButtonClick = () => {
     const splitText = splitTextIntoSentences(text);
-    setSentences(splitText);
+    const sentences = splitText.map((value, index) => ({
+      id: generateUniqueId(),
+      original: `${index + value}`,
+      translated: "",
+      position: index,
+    }));
+
+    setSentences(sentences);
   };
+
+  const handleSubmitForm = (e: FormEvent<HTMLFormElement>) => {};
+
+  const handleAddSentence = (previousItemPosition: number) => {
+    const updatedPositions = updatePositions(previousItemPosition, sentences);
+
+    const newSentence = {
+      id: generateUniqueId(),
+      original: "",
+      translated: "",
+      position: previousItemPosition + 1,
+    };
+
+    const updatedSentences = [...updatedPositions, newSentence];
+
+    updatedSentences.sort((a, b) => a.position - b.position);
+
+    setSentences(updatedSentences);
+  };
+
+  const updatePositions = (
+    startPosition: number,
+    sentences: ISentenceData[]
+  ) => {
+    return sentences.map((sentence) => {
+      if (sentence.position > startPosition) {
+        return { ...sentence, position: sentence.position + 1 };
+      }
+
+      return { ...sentence };
+    });
+  };
+
+  const handleDeleteSentence = () => {};
 
   return (
     <Container maxWidth="lg">
-      <Box component="form" autoComplete="off" sx={{ paddingY: 3 }}>
-        <Box
-          sx={{ display: "flex", flexDirection: "column", width: 1, gap: 1 }}
-        >
-          <Box sx={{ display: "flex", flexDirection: "row", gap: 1 }}>
+      <Box
+        component="form"
+        autoComplete="off"
+        sx={{ paddingY: 3 }}
+        onSubmit={handleSubmitForm}
+      >
+        <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
+          <Box sx={{ display: "flex", gap: 1 }}>
             <TextField
               id="text-input"
               label="Text"
@@ -69,7 +115,7 @@ const Constructor: React.FC = () => {
           </Box>
           <Tooltip title="Convert text into sentences" enterDelay={500}>
             <Button
-              variant="outlined"
+              variant="contained"
               startIcon={<VerticalSplitIcon />}
               onClick={handleConvertButtonClick}
             >
@@ -78,10 +124,21 @@ const Constructor: React.FC = () => {
           </Tooltip>
           {sentences
             ? sentences.map((item, index) => (
-                <SentenceInput key={item + index} defaultOriginalValue={item} />
+                <SentenceInput
+                  key={item.id}
+                  defaultOriginalValue={item.original}
+                  onAdd={() => handleAddSentence(index)}
+                  onDelete={handleDeleteSentence}
+                />
               ))
             : null}
-          {/*<Button variant="contained" startIcon={<UnfoldMoreIcon />}></Button>*/}
+          <Button
+            type="submit"
+            variant="contained"
+            sx={{ alignSelf: "flex-end" }}
+          >
+            Save
+          </Button>
         </Box>
       </Box>
     </Container>
