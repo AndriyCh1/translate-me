@@ -6,7 +6,7 @@ interface ISentence {
 
 export interface IState {
   isLoading: boolean;
-  isFailed: boolean;
+  error: any;
   id: string | null;
   title: string | null;
   description: string | null;
@@ -15,4 +15,5 @@ export interface IState {
 
 export enum Action {
   CREATE = "CREATE",
+  UPDATE = "UPDATE",
 }

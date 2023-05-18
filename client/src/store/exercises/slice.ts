@@ -4,7 +4,7 @@ import { exercisesReducer } from "./reducer";
 
 const initialState: IState = {
   isLoading: false,
-  isFailed: false,
+  error: false,
   id: null,
   title: null,
   description: null,

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Box,
   IconButton,
@@ -11,11 +11,13 @@ import {
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/Delete";
+import { ISentenceData } from "../../../common/interfaces";
 
 interface IProps {
-  defaultOriginalValue?: string;
-  onAdd?: () => void;
-  onDelete?: () => void;
+  value: ISentenceData;
+  onAdd?: (position: number) => void;
+  onDelete?: (id: string) => void;
+  onChange?: (sentence: ISentenceData) => void;
 }
 
 const StyledMenu = styled((props: MenuProps) => (
@@ -51,21 +53,22 @@ const StyledMenu = styled((props: MenuProps) => (
 
 // TODO: come up with an idea how to get rid of repeated attributes
 const SentenceInput: React.FC<IProps> = ({
-  defaultOriginalValue = "",
+  value,
   onAdd,
   onDelete,
+  onChange,
 }) => {
-  const [originalInputValue, setOriginalInputValue] =
-    useState(defaultOriginalValue);
-  const [translatedInputValue, setTranslatedInputValue] = useState("");
+  const [originalValue, setOriginalValue] = useState(value.original);
+  const [translatedValue, setTranslatedValue] = useState("");
   const [anchorOptionsElement, setAnchorOptionsElement] =
     useState<null | HTMLElement>(null);
 
   const handleOriginalInput = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setOriginalInputValue(e.target.value);
+    setOriginalValue(e.target.value);
   };
+
   const handleTranslatedInput = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setTranslatedInputValue(e.target.value);
+    setTranslatedValue(e.target.value);
   };
 
   const isOptionsOpened = Boolean(anchorOptionsElement);
@@ -79,11 +82,26 @@ const SentenceInput: React.FC<IProps> = ({
   };
 
   const handleDelete = () => {
-    onDelete?.();
+    onDelete?.(value.id);
   };
+
   const handleAdd = () => {
-    onAdd?.();
+    onAdd?.(value.position);
   };
+
+  const handleChange = () => {
+    const data: ISentenceData = {
+      ...value,
+      original: originalValue,
+      translated: translatedValue,
+    };
+
+    onChange?.(data);
+  };
+
+  useEffect(() => {
+    handleChange();
+  }, [originalValue, translatedValue]);
 
   return (
     <Box sx={{ display: "flex", gap: 1 }}>
@@ -92,14 +110,14 @@ const SentenceInput: React.FC<IProps> = ({
         fullWidth
         InputLabelProps={{ sx: { color: "text.primary" } }}
         onChange={handleOriginalInput}
-        value={originalInputValue}
+        value={originalValue}
       />
       <TextField
         required
         fullWidth
         InputLabelProps={{ sx: { color: "text.primary" } }}
         onChange={handleTranslatedInput}
-        value={translatedInputValue}
+        value={translatedValue}
       />
       <IconButton sx={{ borderRadius: 1 }} onClick={handleClickMore}>
         <MoreVertIcon />

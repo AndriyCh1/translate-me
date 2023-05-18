@@ -6,6 +6,7 @@ import {
   TextField,
   IconButton,
   Tooltip,
+  colors,
 } from "@mui/material";
 import UnfoldMoreIcon from "@mui/icons-material/UnfoldMore";
 import UnfoldLessIcon from "@mui/icons-material/UnfoldLess";
@@ -15,21 +16,31 @@ import SentenceInput from "./sentence-input/sentence-input";
 import { splitTextIntoSentences } from "../../utils/split-text-into-sentences";
 import { ISentenceData } from "./common/interfaces";
 import { generateUniqueId } from "../../utils/generate-unique-id";
-import { useAppDispatch } from "../../store/hooks";
+import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import { ICreateExerciseRequest } from "../../common/interfaces";
 import { exercisesActions } from "../../store/exercises";
+import Snackbar, { Alert } from "../common/snackbar/snackbar";
 
 const DEFAULT_TEXT_ROWS_NUMBER = 10;
 const LESS_TEXT_ROWS_NUMBER = 3;
 
+interface IAlert {
+  type: "success" | "warning" | "error" | "info";
+  message: string;
+}
+
 // TODO: add fields validation
 const Constructor: React.FC = () => {
   const dispatch = useAppDispatch();
+
+  const { id } = useAppSelector((state) => state.exercisesReducer);
+
   const [showLessText, setShowLessText] = useState(false);
   const [text, setText] = useState("");
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [sentences, setSentences] = useState<ISentenceData[]>([]);
+  const [alert, setAlert] = useState<IAlert | null>();
 
   const handleTitleInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     setTitle(e.target.value);
@@ -114,20 +125,27 @@ const Constructor: React.FC = () => {
     setSentences(updatedPositions);
   };
 
+  const handleUpdateSentence = (data: ISentenceData) => {
+    const updatedSentences = sentences.map((sentence) =>
+      sentence.id === data.id ? { ...sentence, ...data } : sentence
+    );
+
+    setSentences(updatedSentences);
+  };
+
   const increasePositionValueFrom = (
     startPosition: number,
     sentences: ISentenceData[],
     increaseValue = 1
   ) => {
-    return sentences.map((sentence) => {
-      if (sentence.position > startPosition) {
-        return {
-          ...sentence,
-          position: sentence.position + increaseValue,
-        };
-      }
-      return sentence;
-    });
+    return sentences.map((sentence) =>
+      sentence.position > startPosition
+        ? {
+            ...sentence,
+            position: sentence.position + increaseValue,
+          }
+        : sentence
+    );
   };
 
   const handleSubmitForm = (e: FormEvent<HTMLFormElement>) => {
@@ -139,8 +157,28 @@ const Constructor: React.FC = () => {
       sentences,
     };
 
-    dispatch(exercisesActions.create(data));
+    if (id) {
+      dispatch(exercisesActions.update({ ...data, id }))
+        .unwrap()
+        .then(() =>
+          setAlert({ type: "success", message: "Successfully updated" })
+        )
+        .catch((error) =>
+          setAlert({ type: "success", message: error.message })
+        );
+    } else {
+      dispatch(exercisesActions.create(data))
+        .unwrap()
+        .then(() =>
+          setAlert({ type: "success", message: "Successfully created" })
+        )
+        .catch((error) =>
+          setAlert({ type: "success", message: error.message })
+        );
+    }
   };
+
+  const handleStartExercise = () => {};
 
   return (
     <Container maxWidth="lg">
@@ -215,23 +253,39 @@ const Constructor: React.FC = () => {
             ? sentences.map((item, index) => (
                 <SentenceInput
                   key={item.id}
-                  defaultOriginalValue={item.original}
-                  onAdd={() => handleAddSentence(index)}
-                  onDelete={() => handleDeleteSentence(item.id)}
+                  value={item}
+                  onAdd={handleAddSentence}
+                  onDelete={handleDeleteSentence}
+                  onChange={handleUpdateSentence}
                 />
               ))
             : null}
           {sentences.length ? (
-            <Button
-              type="submit"
-              variant="contained"
-              sx={{ alignSelf: "flex-end" }}
-            >
-              Save
-            </Button>
+            <Box sx={{ display: "flex", gap: 1 }}>
+              <>
+                <Button type="submit" variant="contained">
+                  {id ? "Update" : "Save"}
+                </Button>
+
+                {id ? (
+                  <Button
+                    type="button"
+                    variant="contained"
+                    onClick={handleStartExercise}
+                  >
+                    Start
+                  </Button>
+                ) : null}
+              </>
+            </Box>
           ) : null}
         </Box>
       </Box>
+      {alert ? (
+        <Snackbar isOpen={true} onClose={() => setAlert(null)}>
+          <Alert severity={alert.type}>{alert.message}</Alert>
+        </Snackbar>
+      ) : null}
     </Container>
   );
 };
