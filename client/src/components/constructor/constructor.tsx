@@ -29,14 +29,16 @@ const Constructor: React.FC = () => {
     setShowLessText((value) => !value);
   };
 
-  const handleTextInput = (e: React.ChangeEvent<HTMLInputElement>) =>
+  const handleTextInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     setText(e.target.value);
+  };
 
-  const handleConvertButtonClick = () => {
+  const handleConvertAndReplaceButtonClick = () => {
     const splitText = splitTextIntoSentences(text);
+
     const sentences = splitText.map((value, index) => ({
       id: generateUniqueId(),
-      original: `${index + value}`,
+      original: value,
       translated: "",
       position: index,
     }));
@@ -44,10 +46,29 @@ const Constructor: React.FC = () => {
     setSentences(sentences);
   };
 
-  const handleSubmitForm = (e: FormEvent<HTMLFormElement>) => {};
+  const handleConvertAndAddButtonClick = () => {
+    const splitText = splitTextIntoSentences(text);
+    const lastSentenceIndex = sentences.length - 1;
+
+    const sentencesToAdd = splitText.map((value, index) => ({
+      id: generateUniqueId(),
+      original: value,
+      translated: "",
+      position: lastSentenceIndex + index + 1,
+    }));
+
+    const updatedSentences = [...sentences, ...sentencesToAdd];
+
+    updatedSentences.sort((a, b) => a.position - b.position);
+
+    setSentences(updatedSentences);
+  };
 
   const handleAddSentence = (previousItemPosition: number) => {
-    const updatedPositions = updatePositions(previousItemPosition, sentences);
+    const updatedPositions = increasePositionValueFrom(
+      previousItemPosition,
+      sentences
+    );
 
     const newSentence = {
       id: generateUniqueId(),
@@ -63,20 +84,39 @@ const Constructor: React.FC = () => {
     setSentences(updatedSentences);
   };
 
-  const updatePositions = (
+  const handleDeleteSentence = (id: string) => {
+    const deleteSentenceIndex = sentences.findIndex(
+      (sentence) => sentence.id === id
+    );
+
+    sentences.splice(deleteSentenceIndex, 1);
+
+    const updatedPositions = increasePositionValueFrom(
+      deleteSentenceIndex,
+      sentences,
+      -1
+    );
+
+    setSentences(updatedPositions);
+  };
+
+  const increasePositionValueFrom = (
     startPosition: number,
-    sentences: ISentenceData[]
+    sentences: ISentenceData[],
+    increaseValue = 1
   ) => {
     return sentences.map((sentence) => {
       if (sentence.position > startPosition) {
-        return { ...sentence, position: sentence.position + 1 };
+        return {
+          ...sentence,
+          position: sentence.position + increaseValue,
+        };
       }
-
-      return { ...sentence };
+      return sentence;
     });
   };
 
-  const handleDeleteSentence = () => {};
+  const handleSubmitForm = (e: FormEvent<HTMLFormElement>) => {};
 
   return (
     <Container maxWidth="lg">
@@ -113,32 +153,41 @@ const Constructor: React.FC = () => {
               </IconButton>
             </Tooltip>
           </Box>
-          <Tooltip title="Convert text into sentences" enterDelay={500}>
+          <Box sx={{ display: "flex", gap: 1 }}>
             <Button
               variant="contained"
               startIcon={<VerticalSplitIcon />}
-              onClick={handleConvertButtonClick}
+              onClick={handleConvertAndReplaceButtonClick}
             >
-              Convert into sentences
+              Convert
             </Button>
-          </Tooltip>
-          {sentences
+            <Button
+              variant="contained"
+              startIcon={<VerticalSplitIcon />}
+              onClick={handleConvertAndAddButtonClick}
+            >
+              Convert and add to the end
+            </Button>
+          </Box>
+          {sentences.length
             ? sentences.map((item, index) => (
                 <SentenceInput
                   key={item.id}
                   defaultOriginalValue={item.original}
                   onAdd={() => handleAddSentence(index)}
-                  onDelete={handleDeleteSentence}
+                  onDelete={() => handleDeleteSentence(item.id)}
                 />
               ))
             : null}
-          <Button
-            type="submit"
-            variant="contained"
-            sx={{ alignSelf: "flex-end" }}
-          >
-            Save
-          </Button>
+          {sentences.length ? (
+            <Button
+              type="submit"
+              variant="contained"
+              sx={{ alignSelf: "flex-end" }}
+            >
+              Save
+            </Button>
+          ) : null}
         </Box>
       </Box>
     </Container>

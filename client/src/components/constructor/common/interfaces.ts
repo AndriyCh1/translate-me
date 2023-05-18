@@ -1,5 +1,5 @@
 export interface ISentenceData {
-  id?: string;
+  id: string;
   original: string;
   translated: string;
   position: number;
