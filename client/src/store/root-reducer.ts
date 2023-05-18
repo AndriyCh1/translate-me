@@ -1,5 +1,6 @@
 import { combineReducers } from "@reduxjs/toolkit";
+import { exercisesReducer } from "./exercises";
 
-const rootReducer = combineReducers({});
-
-export { rootReducer };
+export const rootReducer = combineReducers({
+  exercisesReducer,
+});

@@ -6,3 +6,5 @@ export enum AppRoute {
   STORED = "/stored",
   EXERCISE_$ID = "/exercise/:id",
 }
+
+export const ENV = { API_PATH: process.env.REACT_APP_API_PATH };

@@ -15,15 +15,29 @@ import SentenceInput from "./sentence-input/sentence-input";
 import { splitTextIntoSentences } from "../../utils/split-text-into-sentences";
 import { ISentenceData } from "./common/interfaces";
 import { generateUniqueId } from "../../utils/generate-unique-id";
+import { useAppDispatch } from "../../store/hooks";
+import { ICreateExerciseRequest } from "../../common/interfaces";
+import { exercisesActions } from "../../store/exercises";
 
 const DEFAULT_TEXT_ROWS_NUMBER = 10;
 const LESS_TEXT_ROWS_NUMBER = 3;
 
 // TODO: add fields validation
 const Constructor: React.FC = () => {
+  const dispatch = useAppDispatch();
   const [showLessText, setShowLessText] = useState(false);
   const [text, setText] = useState("");
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
   const [sentences, setSentences] = useState<ISentenceData[]>([]);
+
+  const handleTitleInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setTitle(e.target.value);
+  };
+
+  const handleDescriptionInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setDescription(e.target.value);
+  };
 
   const handleShowLessButtonClick = () => {
     setShowLessText((value) => !value);
@@ -116,7 +130,17 @@ const Constructor: React.FC = () => {
     });
   };
 
-  const handleSubmitForm = (e: FormEvent<HTMLFormElement>) => {};
+  const handleSubmitForm = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    const data: ICreateExerciseRequest = {
+      title,
+      description,
+      sentences,
+    };
+
+    dispatch(exercisesActions.create(data));
+  };
 
   return (
     <Container maxWidth="lg">
@@ -127,6 +151,24 @@ const Constructor: React.FC = () => {
         onSubmit={handleSubmitForm}
       >
         <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
+          <Box sx={{ display: "flex", gap: 1 }}>
+            <TextField
+              required
+              fullWidth
+              placeholder="Title"
+              onChange={handleTitleInput}
+              value={title}
+              InputLabelProps={{ sx: { color: "text.primary" } }}
+            />
+            <TextField
+              required
+              fullWidth
+              placeholder="Description"
+              onChange={handleDescriptionInput}
+              value={description}
+              InputLabelProps={{ sx: { color: "text.primary" } }}
+            />
+          </Box>
           <Box sx={{ display: "flex", gap: 1 }}>
             <TextField
               id="text-input"
