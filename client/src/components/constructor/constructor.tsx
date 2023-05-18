@@ -163,18 +163,14 @@ const Constructor: React.FC = () => {
         .then(() =>
           setAlert({ type: "success", message: "Successfully updated" })
         )
-        .catch((error) =>
-          setAlert({ type: "success", message: error.message })
-        );
+        .catch((error) => setAlert({ type: "error", message: error.message }));
     } else {
       dispatch(exercisesActions.create(data))
         .unwrap()
         .then(() =>
           setAlert({ type: "success", message: "Successfully created" })
         )
-        .catch((error) =>
-          setAlert({ type: "success", message: error.message })
-        );
+        .catch((error) => setAlert({ type: "error", message: error.message }));
     }
   };
 
