@@ -15,9 +15,10 @@ const ExerciseCard: React.FC<IProps> = ({
   title,
   description,
   onStart,
+  onDelete,
 }) => {
   const handleStart = () => onStart();
-  const handleDelete = () => onStart();
+  const handleDelete = () => onDelete();
 
   return (
     <ListItem

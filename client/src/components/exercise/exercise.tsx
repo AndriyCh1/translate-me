@@ -1,14 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { useParams } from "react-router-dom";
-import {
-  Box,
-  Button,
-  Container,
-  IconButton,
-  Paper,
-  TextField,
-  Typography,
-} from "@mui/material";
+import { Box, Container, Typography } from "@mui/material";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import { exercisesActions } from "../../store/exercises";
 import ExerciseSentence from "./exercise-sentence/exercise-sentence";
@@ -16,14 +8,15 @@ import ExerciseSentence from "./exercise-sentence/exercise-sentence";
 const Exercise: React.FC = ({}) => {
   const { id } = useParams();
 
-  const dispatch = useAppDispatch();
   const { isLoading, trainExercise } = useAppSelector(
     (state) => state.exercises
   );
 
+  const dispatch = useAppDispatch();
+
   useEffect(() => {
     if (id) {
-      dispatch(exercisesActions.get(id));
+      dispatch(exercisesActions.getById(id));
     }
   }, [dispatch]);
 

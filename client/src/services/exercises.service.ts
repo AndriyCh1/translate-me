@@ -52,6 +52,14 @@ export const getExercise = async (
   }
 };
 
+export const deleteExercise = async (id: string): Promise<void> => {
+  try {
+    await api.delete(`/exercises/${id}`, {});
+  } catch (error) {
+    throw error;
+  }
+};
+
 export const convertTextToSentences = (text: string) => {
   const splitText = splitTextIntoSentences(text);
 

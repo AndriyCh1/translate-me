@@ -28,8 +28,14 @@ const Exercises: React.FC = ({}) => {
     navigate(`/exercise/${id}`);
   };
 
-  const handleDeleteExercise = (id: string) => {
-    navigate(`/exercise/${id}`);
+  const handleDeleteExercise = async (id: string) => {
+    try {
+      await dispatch(exercisesActions.deleteById(id)).unwrap();
+      setAlert({ type: "success", message: "Successfully deleted" });
+    } catch (error) {
+      // @ts-ignore
+      setAlert({ type: "success", message: error.message });
+    }
   };
 
   return (

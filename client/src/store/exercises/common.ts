@@ -25,4 +25,5 @@ export enum Action {
   UPDATE = "UPDATE",
   GET_ALL = "GET_ALL",
   GET = "GET",
+  DELETE = "DELETE",
 }

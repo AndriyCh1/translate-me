@@ -18,6 +18,7 @@ import { exercisesActions } from "../../store/exercises";
 import Snackbar, { Alert } from "../common/snackbar/snackbar";
 import * as exerciseService from "../../services/exercises.service";
 import { ICreateExerciseRequest, ISentenceData } from "../../common/interfaces";
+import { useNavigate } from "react-router-dom";
 
 const DEFAULT_TEXT_ROWS_NUMBER = 10;
 const LESS_TEXT_ROWS_NUMBER = 3;
@@ -30,6 +31,7 @@ interface IAlert {
 // TODO: add fields validation
 const Constructor: React.FC = () => {
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
 
   const exercise = useAppSelector((state) => state.exercises.exercise);
 
@@ -129,7 +131,13 @@ const Constructor: React.FC = () => {
     }
   };
 
-  const handleStartExercise = () => {};
+  const handleStartExercise = () => {
+    if (exercise?._id) {
+      navigate(`/exercise/${exercise._id}`);
+    }
+
+    setAlert({ type: "info", message: "Cannot start training" });
+  };
 
   return (
     <Container maxWidth="lg">

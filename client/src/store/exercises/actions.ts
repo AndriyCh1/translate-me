@@ -6,6 +6,7 @@ import {
 } from "../../common/interfaces";
 import {
   createExercise,
+  deleteExercise,
   getAllExercises,
   getExercise,
   updateExercise,
@@ -44,11 +45,23 @@ export const getAll = createAsyncThunk(
   }
 );
 
-export const get = createAsyncThunk(
+export const getById = createAsyncThunk(
   Action.GET,
   async (id: string, { rejectWithValue }) => {
     try {
       return await getExercise(id);
+    } catch (e) {
+      return rejectWithValue(e);
+    }
+  }
+);
+
+export const deleteById = createAsyncThunk(
+  Action.DELETE,
+  async (id: string, { rejectWithValue }) => {
+    try {
+      await deleteExercise(id);
+      return id;
     } catch (e) {
       return rejectWithValue(e);
     }
