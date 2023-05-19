@@ -6,20 +6,18 @@ import {
   TextField,
   IconButton,
   Tooltip,
-  colors,
 } from "@mui/material";
 import UnfoldMoreIcon from "@mui/icons-material/UnfoldMore";
 import UnfoldLessIcon from "@mui/icons-material/UnfoldLess";
 import VerticalSplitIcon from "@mui/icons-material/VerticalSplit";
+import SentenceInputContainer from "./sentence-input-container/sentence-input-container";
 
-import SentenceInput from "./sentence-input/sentence-input";
-import { splitTextIntoSentences } from "../../utils/split-text-into-sentences";
-import { ISentenceData } from "./common/interfaces";
-import { generateUniqueId } from "../../utils/generate-unique-id";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
-import { ICreateExerciseRequest } from "../../common/interfaces";
+import { generateUniqueId } from "../../utils/generate-unique-id";
 import { exercisesActions } from "../../store/exercises";
 import Snackbar, { Alert } from "../common/snackbar/snackbar";
+import * as exerciseService from "../../services/exercises.service";
+import { ICreateExerciseRequest, ISentenceData } from "../../common/interfaces";
 
 const DEFAULT_TEXT_ROWS_NUMBER = 10;
 const LESS_TEXT_ROWS_NUMBER = 3;
@@ -59,38 +57,20 @@ const Constructor: React.FC = () => {
   };
 
   const handleConvertAndReplaceButtonClick = () => {
-    const splitText = splitTextIntoSentences(text);
-
-    const sentences = splitText.map((value, index) => ({
-      id: generateUniqueId(),
-      original: value,
-      translated: "",
-      position: index,
-    }));
-
-    setSentences(sentences);
+    const convertedSentences = exerciseService.convertTextToSentences(text);
+    setSentences(convertedSentences);
   };
 
   const handleConvertAndAddButtonClick = () => {
-    const splitText = splitTextIntoSentences(text);
-    const lastSentenceIndex = sentences.length - 1;
-
-    const sentencesToAdd = splitText.map((value, index) => ({
-      id: generateUniqueId(),
-      original: value,
-      translated: "",
-      position: lastSentenceIndex + index + 1,
-    }));
-
-    const updatedSentences = [...sentences, ...sentencesToAdd];
-
-    updatedSentences.sort((a, b) => a.position - b.position);
-
+    const updatedSentences = exerciseService.concatNewSentences(
+      sentences,
+      text
+    );
     setSentences(updatedSentences);
   };
 
   const handleAddSentence = (previousItemPosition: number) => {
-    const updatedPositions = increasePositionValueFrom(
+    const updatedPositions = exerciseService.increasePositionValueFrom(
       previousItemPosition,
       sentences
     );
@@ -102,27 +82,18 @@ const Constructor: React.FC = () => {
       position: previousItemPosition + 1,
     };
 
-    const updatedSentences = [...updatedPositions, newSentence];
-
-    updatedSentences.sort((a, b) => a.position - b.position);
+    const updatedSentences = exerciseService.sortSentences([
+      ...updatedPositions,
+      newSentence,
+    ]);
 
     setSentences(updatedSentences);
   };
 
   const handleDeleteSentence = (id: string) => {
-    const deleteSentenceIndex = sentences.findIndex(
-      (sentence) => sentence.id === id
-    );
+    const updatedSentences = exerciseService.deleteSentenceById(id, sentences);
 
-    sentences.splice(deleteSentenceIndex, 1);
-
-    const updatedPositions = increasePositionValueFrom(
-      deleteSentenceIndex,
-      sentences,
-      -1
-    );
-
-    setSentences(updatedPositions);
+    setSentences(updatedSentences);
   };
 
   const handleUpdateSentence = (data: ISentenceData) => {
@@ -133,22 +104,7 @@ const Constructor: React.FC = () => {
     setSentences(updatedSentences);
   };
 
-  const increasePositionValueFrom = (
-    startPosition: number,
-    sentences: ISentenceData[],
-    increaseValue = 1
-  ) => {
-    return sentences.map((sentence) =>
-      sentence.position > startPosition
-        ? {
-            ...sentence,
-            position: sentence.position + increaseValue,
-          }
-        : sentence
-    );
-  };
-
-  const handleSubmitForm = (e: FormEvent<HTMLFormElement>) => {
+  const handleSubmitForm = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     const data: ICreateExerciseRequest = {
@@ -157,20 +113,17 @@ const Constructor: React.FC = () => {
       sentences,
     };
 
-    if (id) {
-      dispatch(exercisesActions.update({ ...data, id }))
-        .unwrap()
-        .then(() =>
-          setAlert({ type: "success", message: "Successfully updated" })
-        )
-        .catch((error) => setAlert({ type: "error", message: error.message }));
-    } else {
-      dispatch(exercisesActions.create(data))
-        .unwrap()
-        .then(() =>
-          setAlert({ type: "success", message: "Successfully created" })
-        )
-        .catch((error) => setAlert({ type: "error", message: error.message }));
+    try {
+      if (id) {
+        await dispatch(exercisesActions.update({ ...data, id })).unwrap();
+        setAlert({ type: "success", message: "Successfully updated" });
+      } else {
+        await dispatch(exercisesActions.create(data)).unwrap();
+        setAlert({ type: "success", message: "Successfully created" });
+      }
+    } catch (error) {
+      // @ts-ignore
+      setAlert({ type: "error", message: error.message });
     }
   };
 
@@ -245,17 +198,13 @@ const Constructor: React.FC = () => {
               Convert and add to the end
             </Button>
           </Box>
-          {sentences.length
-            ? sentences.map((item, index) => (
-                <SentenceInput
-                  key={item.id}
-                  value={item}
-                  onAdd={handleAddSentence}
-                  onDelete={handleDeleteSentence}
-                  onChange={handleUpdateSentence}
-                />
-              ))
-            : null}
+          <SentenceInputContainer
+            data={sentences}
+            onAdd={handleAddSentence}
+            onDelete={handleDeleteSentence}
+            onChange={handleUpdateSentence}
+          />
+
           {sentences.length ? (
             <Box sx={{ display: "flex", gap: 1 }}>
               <>
