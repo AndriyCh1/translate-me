@@ -41,6 +41,17 @@ export const getAllExercises = async (): Promise<IGetExerciseResponse[]> => {
   }
 };
 
+export const getExercise = async (
+  id: string
+): Promise<IGetExerciseResponse> => {
+  try {
+    const response = await api.get(`/exercises/${id}`, {});
+    return response.data as IGetExerciseResponse;
+  } catch (error) {
+    throw error;
+  }
+};
+
 export const convertTextToSentences = (text: string) => {
   const splitText = splitTextIntoSentences(text);
 

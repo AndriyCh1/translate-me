@@ -14,6 +14,17 @@ export const exercisesReducer = (builder: ActionReducerMapBuilder<IState>) => {
     state.isLoading = false;
     state.exercises = action.payload;
   });
+  builder.addCase(exercisesActions.get.pending, (state) => {
+    state.isLoading = true;
+  });
+  builder.addCase(exercisesActions.get.rejected, (state, action) => {
+    state.isLoading = false;
+    state.error = action.payload;
+  });
+  builder.addCase(exercisesActions.get.fulfilled, (state, action) => {
+    state.isLoading = false;
+    state.trainExercise = action.payload;
+  });
   builder.addMatcher(
     isAnyOf(exercisesActions.create.pending, exercisesActions.update.pending),
     (state) => {

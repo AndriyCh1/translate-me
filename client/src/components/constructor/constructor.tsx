@@ -110,7 +110,7 @@ const Constructor: React.FC = () => {
     const data: ICreateExerciseRequest = {
       title,
       description,
-      sentences,
+      sentences: sentences.map((item) => ({ ...item, _id: undefined })),
     };
 
     try {

@@ -7,6 +7,7 @@ const initialState: IState = {
   error: "",
   exercise: null,
   exercises: [],
+  trainExercise: null,
 };
 
 const { reducer, actions } = createSlice({

@@ -15,6 +15,7 @@ interface IExercise {
 export interface IState {
   exercise: IExercise | null;
   exercises: IExercise[];
+  trainExercise: IExercise | null;
   isLoading: boolean;
   error: any;
 }
@@ -23,4 +24,5 @@ export enum Action {
   CREATE = "CREATE",
   UPDATE = "UPDATE",
   GET_ALL = "GET_ALL",
+  GET = "GET",
 }

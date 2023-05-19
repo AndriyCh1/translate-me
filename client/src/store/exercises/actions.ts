@@ -7,6 +7,7 @@ import {
 import {
   createExercise,
   getAllExercises,
+  getExercise,
   updateExercise,
 } from "../../services/exercises.service";
 
@@ -37,6 +38,17 @@ export const getAll = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       return await getAllExercises();
+    } catch (e) {
+      return rejectWithValue(e);
+    }
+  }
+);
+
+export const get = createAsyncThunk(
+  Action.GET,
+  async (id: string, { rejectWithValue }) => {
+    try {
+      return await getExercise(id);
     } catch (e) {
       return rejectWithValue(e);
     }
