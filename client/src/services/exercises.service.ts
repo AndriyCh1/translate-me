@@ -24,7 +24,7 @@ export const updateExercise = async (
   body: IUpdateExerciseRequest
 ): Promise<IUpdateExerciseResponse> => {
   try {
-    const response = await api.put(`/exercises/${body.id}`, body);
+    const response = await api.put(`/exercises/${body._id}`, body);
     return response.data as IUpdateExerciseResponse;
   } catch (error) {
     throw error;
@@ -35,7 +35,7 @@ export const convertTextToSentences = (text: string) => {
   const splitText = splitTextIntoSentences(text);
 
   return splitText.map((value, index) => ({
-    id: generateUniqueId(),
+    _id: generateUniqueId(),
     original: value,
     translated: "",
     position: index,
@@ -50,7 +50,7 @@ export const concatNewSentences = (
   const lastSentenceIndex = sentences.length - 1;
 
   const sentencesToAdd = splitText.map((value, index) => ({
-    id: generateUniqueId(),
+    _id: generateUniqueId(),
     original: value,
     translated: "",
     position: lastSentenceIndex + index + 1,
@@ -78,7 +78,7 @@ export const increasePositionValueFrom = (
 
 export const deleteSentenceById = (id: string, sentences: ISentenceData[]) => {
   const deleteSentenceIndex = sentences.findIndex(
-    (sentence) => sentence.id === id
+    (sentence) => sentence._id === id
   );
 
   sentences.splice(deleteSentenceIndex, 1);

@@ -31,7 +31,7 @@ interface IAlert {
 const Constructor: React.FC = () => {
   const dispatch = useAppDispatch();
 
-  const { id } = useAppSelector((state) => state.exercisesReducer);
+  const { _id } = useAppSelector((state) => state.exercisesReducer.exercise);
 
   const [showLessText, setShowLessText] = useState(false);
   const [text, setText] = useState("");
@@ -76,7 +76,7 @@ const Constructor: React.FC = () => {
     );
 
     const newSentence = {
-      id: generateUniqueId(),
+      _id: generateUniqueId(),
       original: "",
       translated: "",
       position: previousItemPosition + 1,
@@ -98,7 +98,7 @@ const Constructor: React.FC = () => {
 
   const handleUpdateSentence = (data: ISentenceData) => {
     const updatedSentences = sentences.map((sentence) =>
-      sentence.id === data.id ? { ...sentence, ...data } : sentence
+      sentence._id === data._id ? { ...sentence, ...data } : sentence
     );
 
     setSentences(updatedSentences);
@@ -114,8 +114,8 @@ const Constructor: React.FC = () => {
     };
 
     try {
-      if (id) {
-        await dispatch(exercisesActions.update({ ...data, id })).unwrap();
+      if (_id) {
+        await dispatch(exercisesActions.update({ ...data, _id })).unwrap();
         setAlert({ type: "success", message: "Successfully updated" });
       } else {
         await dispatch(exercisesActions.create(data)).unwrap();
@@ -209,10 +209,10 @@ const Constructor: React.FC = () => {
             <Box sx={{ display: "flex", gap: 1 }}>
               <>
                 <Button type="submit" variant="contained">
-                  {id ? "Update" : "Save"}
+                  {_id ? "Update" : "Save"}
                 </Button>
 
-                {id ? (
+                {_id ? (
                   <Button
                     type="button"
                     variant="contained"

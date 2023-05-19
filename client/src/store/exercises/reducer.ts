@@ -24,10 +24,7 @@ export const exercisesReducer = (builder: ActionReducerMapBuilder<IState>) => {
     (state, action) => {
       state.isLoading = false;
       state.error = null;
-      state.id = action.payload._id;
-      state.title = action.payload.title;
-      state.description = action.payload.description;
-      state.sentences = action.payload.sentences;
+      state.exercise = action.payload;
     }
   );
 };

@@ -4,11 +4,13 @@ import { exercisesReducer } from "./reducer";
 
 const initialState: IState = {
   isLoading: false,
-  error: false,
-  id: null,
-  title: null,
-  description: null,
-  sentences: null,
+  error: "",
+  exercise: {
+    _id: null,
+    title: null,
+    description: null,
+    sentences: null,
+  },
 };
 
 const { reducer, actions } = createSlice({

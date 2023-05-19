@@ -21,7 +21,7 @@ export interface ICreateExerciseResponse {
 }
 
 export interface IUpdateExerciseRequest {
-  id: string;
+  _id: string;
   title: string;
   description: string;
   sentences: {
@@ -44,7 +44,7 @@ export interface IUpdateExerciseResponse {
 }
 
 export interface ISentenceData {
-  id: string;
+  _id: string;
   original: string;
   translated: string;
   position: number;

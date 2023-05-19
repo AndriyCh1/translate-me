@@ -1,6 +1,6 @@
 import React from "react";
-import { ISentenceData } from "../common/interfaces";
 import SentenceInput from "../sentence-input/sentence-input";
+import { ISentenceData } from "../../../common/interfaces";
 
 interface IProps {
   data: ISentenceData[];
@@ -20,7 +20,7 @@ const SentenceInputContainer: React.FC<IProps> = ({
       <>
         {data.map((item) => (
           <SentenceInput
-            key={item.id}
+            key={item._id}
             value={item}
             onAdd={onAdd}
             onDelete={onDelete}

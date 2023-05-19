@@ -82,7 +82,7 @@ const SentenceInput: React.FC<IProps> = ({
   };
 
   const handleDelete = () => {
-    onDelete?.(value.id);
+    onDelete?.(value._id);
   };
 
   const handleAdd = () => {
