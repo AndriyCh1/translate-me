@@ -8,7 +8,7 @@ import { AppRoute } from "../common/enums";
 import Navbar from "./common/navbar/navbar";
 import Exercise from "./exercise/exercise";
 import Constructor from "./constructor/constructor";
-import Exercises from "./exercise-list/exercises";
+import Exercises from "./exercises/exercises";
 
 const App: React.FC = ({}) => {
   return (

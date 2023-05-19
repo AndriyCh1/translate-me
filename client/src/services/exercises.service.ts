@@ -2,6 +2,7 @@ import { api } from "./index";
 import {
   ICreateExerciseRequest,
   ICreateExerciseResponse,
+  IGetExerciseResponse,
   ISentenceData,
   IUpdateExerciseRequest,
   IUpdateExerciseResponse,
@@ -26,6 +27,15 @@ export const updateExercise = async (
   try {
     const response = await api.put(`/exercises/${body._id}`, body);
     return response.data as IUpdateExerciseResponse;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const getAllExercises = async (): Promise<IGetExerciseResponse[]> => {
+  try {
+    const response = await api.get(`/exercises`, {});
+    return response.data as IGetExerciseResponse[];
   } catch (error) {
     throw error;
   }

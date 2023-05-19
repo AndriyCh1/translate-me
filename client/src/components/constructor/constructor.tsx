@@ -31,7 +31,7 @@ interface IAlert {
 const Constructor: React.FC = () => {
   const dispatch = useAppDispatch();
 
-  const { _id } = useAppSelector((state) => state.exercisesReducer.exercise);
+  const exercise = useAppSelector((state) => state.exercises.exercise);
 
   const [showLessText, setShowLessText] = useState(false);
   const [text, setText] = useState("");
@@ -114,8 +114,10 @@ const Constructor: React.FC = () => {
     };
 
     try {
-      if (_id) {
-        await dispatch(exercisesActions.update({ ...data, _id })).unwrap();
+      if (exercise) {
+        await dispatch(
+          exercisesActions.update({ ...data, _id: exercise._id })
+        ).unwrap();
         setAlert({ type: "success", message: "Successfully updated" });
       } else {
         await dispatch(exercisesActions.create(data)).unwrap();
@@ -209,10 +211,10 @@ const Constructor: React.FC = () => {
             <Box sx={{ display: "flex", gap: 1 }}>
               <>
                 <Button type="submit" variant="contained">
-                  {_id ? "Update" : "Save"}
+                  {exercise?._id ? "Update" : "Save"}
                 </Button>
 
-                {_id ? (
+                {exercise?._id ? (
                   <Button
                     type="button"
                     variant="contained"

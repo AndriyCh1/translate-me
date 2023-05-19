@@ -6,14 +6,15 @@ interface ISentence {
 }
 
 interface IExercise {
-  _id: string | null;
-  title: string | null;
-  description: string | null;
-  sentences: ISentence[] | null;
+  _id: string;
+  title: string;
+  description: string;
+  sentences: ISentence[];
 }
 
 export interface IState {
-  exercise: IExercise;
+  exercise: IExercise | null;
+  exercises: IExercise[];
   isLoading: boolean;
   error: any;
 }

@@ -3,6 +3,17 @@ import { ActionReducerMapBuilder, isAnyOf } from "@reduxjs/toolkit";
 import { exercisesActions } from "./";
 
 export const exercisesReducer = (builder: ActionReducerMapBuilder<IState>) => {
+  builder.addCase(exercisesActions.getAll.pending, (state) => {
+    state.isLoading = true;
+  });
+  builder.addCase(exercisesActions.getAll.rejected, (state, action) => {
+    state.isLoading = false;
+    state.error = action.payload;
+  });
+  builder.addCase(exercisesActions.getAll.fulfilled, (state, action) => {
+    state.isLoading = false;
+    state.exercises = action.payload;
+  });
   builder.addMatcher(
     isAnyOf(exercisesActions.create.pending, exercisesActions.update.pending),
     (state) => {
@@ -14,6 +25,7 @@ export const exercisesReducer = (builder: ActionReducerMapBuilder<IState>) => {
     (state, action) => {
       state.isLoading = false;
       state.error = action.payload;
+      state.exercise = null;
     }
   );
   builder.addMatcher(

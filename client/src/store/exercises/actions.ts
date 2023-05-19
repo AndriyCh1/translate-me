@@ -6,6 +6,7 @@ import {
 } from "../../common/interfaces";
 import {
   createExercise,
+  getAllExercises,
   updateExercise,
 } from "../../services/exercises.service";
 
@@ -25,6 +26,17 @@ export const update = createAsyncThunk(
   async (data: IUpdateExerciseRequest, { rejectWithValue }) => {
     try {
       return await updateExercise(data);
+    } catch (e) {
+      return rejectWithValue(e);
+    }
+  }
+);
+
+export const getAll = createAsyncThunk(
+  Action.GET_ALL,
+  async (_, { rejectWithValue }) => {
+    try {
+      return await getAllExercises();
     } catch (e) {
       return rejectWithValue(e);
     }

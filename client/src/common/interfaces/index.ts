@@ -43,6 +43,18 @@ export interface IUpdateExerciseResponse {
   }[];
 }
 
+export interface IGetExerciseResponse {
+  _id: string;
+  title: string;
+  description: string;
+  sentences: {
+    _id: string;
+    original: string;
+    translated: string;
+    position: number;
+  }[];
+}
+
 export interface ISentenceData {
   _id: string;
   original: string;
