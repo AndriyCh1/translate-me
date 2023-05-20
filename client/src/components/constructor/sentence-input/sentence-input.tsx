@@ -59,7 +59,7 @@ const SentenceInput: React.FC<IProps> = ({
   onChange,
 }) => {
   const [originalValue, setOriginalValue] = useState(value.original);
-  const [translatedValue, setTranslatedValue] = useState("");
+  const [translatedValue, setTranslatedValue] = useState(value.translated);
   const [anchorOptionsElement, setAnchorOptionsElement] =
     useState<null | HTMLElement>(null);
 

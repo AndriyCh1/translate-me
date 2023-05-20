@@ -60,32 +60,77 @@ export const deleteExercise = async (id: string): Promise<void> => {
   }
 };
 
-export const convertTextToSentences = (text: string) => {
+export const convertTextToSentences = (text: string, original = true) => {
   const splitText = splitTextIntoSentences(text);
 
   return splitText.map((value, index) => ({
     _id: generateUniqueId(),
-    original: value,
-    translated: "",
+    original: original ? value : "",
+    translated: original ? "" : value,
     position: index,
   }));
 };
 
-export const concatNewSentences = (
+export const updateSentences = (
   sentences: ISentenceData[],
-  text: string
+  text: string,
+  original = true
 ) => {
   const splitText = splitTextIntoSentences(text);
-  const lastSentenceIndex = sentences.length - 1;
+  const textLength = splitText.length;
+  const sentencesLength = sentences.length;
+  const updatedSentences = [];
 
-  const sentencesToAdd = splitText.map((value, index) => ({
-    _id: generateUniqueId(),
-    original: value,
-    translated: "",
-    position: lastSentenceIndex + index + 1,
-  }));
+  const totalLength =
+    textLength > sentencesLength ? textLength : sentencesLength;
 
-  const updatedSentences = sortSentences([...sentences, ...sentencesToAdd]);
+  for (let i = 0; i < totalLength; i++) {
+    if (textLength > sentencesLength) {
+      const value = splitText[i];
+
+      const sentenceBase = {
+        _id: generateUniqueId(),
+        ...(original && { originalValue: value }),
+        ...(!original && { translated: value }),
+      };
+
+      let sentenceToUpdate;
+
+      if (i <= sentencesLength - 1) {
+        sentenceToUpdate = sentences[i];
+      } else {
+        sentenceToUpdate = {
+          original: "",
+          translated: "",
+          position: i,
+        };
+      }
+
+      updatedSentences.push({ ...sentenceToUpdate, ...sentenceBase });
+    } else {
+      let sentenceToUpdate;
+
+      if (i <= textLength - 1) {
+        const value = splitText[i];
+        const sentenceBase = {
+          _id: generateUniqueId(),
+          ...(original && { original: value }),
+          ...(!original && { translated: value }),
+        };
+
+        sentenceToUpdate = { ...sentences[i], ...sentenceBase };
+      } else {
+        const sentenceBase = {
+          _id: generateUniqueId(),
+          ...(original && { original: "" }),
+          ...(!original && { translated: "" }),
+        };
+
+        sentenceToUpdate = { ...sentences[i], ...sentenceBase };
+      }
+      updatedSentences.push(sentenceToUpdate);
+    }
+  }
 
   return updatedSentences;
 };

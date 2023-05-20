@@ -7,7 +7,9 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import GTranslateIcon from "@mui/icons-material/GTranslate";
+
+import SubtitlesIcon from "@mui/icons-material/Subtitles";
+import SubtitlesOffIcon from "@mui/icons-material/SubtitlesOff";
 
 interface IProps {
   data: {
@@ -50,7 +52,11 @@ const ExerciseSentence: React.FC<IProps> = ({ data }) => {
         }}
         onClick={handleToggleTranslation}
       >
-        <GTranslateIcon sx={{ fontSize: 21 }} />
+        {showTranslation ? (
+          <SubtitlesOffIcon sx={{ fontSize: 21, color: "background.paper" }} />
+        ) : (
+          <SubtitlesIcon sx={{ fontSize: 21 }} />
+        )}
       </IconButton>
       <Box sx={{ display: "flex", flexDirection: "column", gap: 1, width: 1 }}>
         <Box sx={{ display: "flex", gap: 1, width: 1 }}>

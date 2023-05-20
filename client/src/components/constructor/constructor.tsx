@@ -6,11 +6,14 @@ import {
   TextField,
   IconButton,
   Tooltip,
+  RadioGroup,
+  FormControlLabel,
 } from "@mui/material";
 import UnfoldMoreIcon from "@mui/icons-material/UnfoldMore";
 import UnfoldLessIcon from "@mui/icons-material/UnfoldLess";
 import VerticalSplitIcon from "@mui/icons-material/VerticalSplit";
 import SentenceInputContainer from "./sentence-input-container/sentence-input-container";
+import Radio from "@mui/material/Radio";
 
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import { generateUniqueId } from "../../utils/generate-unique-id";
@@ -28,6 +31,11 @@ interface IAlert {
   message: string;
 }
 
+enum TextType {
+  TRANSLATED = "translated",
+  ORIGINAL = "original",
+}
+
 // TODO: add fields validation
 const Constructor: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -37,6 +45,7 @@ const Constructor: React.FC = () => {
 
   const [showLessText, setShowLessText] = useState(false);
   const [text, setText] = useState("");
+  const [textType, setTextType] = useState<TextType>(TextType.ORIGINAL);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [sentences, setSentences] = useState<ISentenceData[]>([]);
@@ -58,17 +67,27 @@ const Constructor: React.FC = () => {
     setText(e.target.value);
   };
 
-  const handleConvertAndReplaceButtonClick = () => {
-    const convertedSentences = exerciseService.convertTextToSentences(text);
-    setSentences(convertedSentences);
+  const handleChangeTextType = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setTextType((e.target as HTMLInputElement).value as TextType);
   };
 
-  const handleConvertAndAddButtonClick = () => {
-    const updatedSentences = exerciseService.concatNewSentences(
-      sentences,
-      text
-    );
-    setSentences(updatedSentences);
+  const handleConvertAndReplaceButtonClick = () => {
+    const isOriginal = textType === TextType.ORIGINAL;
+
+    if (!sentences.length) {
+      const convertedSentences = exerciseService.convertTextToSentences(
+        text,
+        isOriginal
+      );
+      setSentences(convertedSentences);
+    } else {
+      const updatedSentences = exerciseService.updateSentences(
+        sentences,
+        text,
+        isOriginal
+      );
+      setSentences(updatedSentences);
+    }
   };
 
   const handleAddSentence = (previousItemPosition: number) => {
@@ -193,19 +212,28 @@ const Constructor: React.FC = () => {
             </Tooltip>
           </Box>
           <Box sx={{ display: "flex", gap: 1 }}>
+            <RadioGroup
+              value={textType}
+              onChange={handleChangeTextType}
+              sx={{ display: "flex", flexDirection: "row", gap: 1 }}
+            >
+              <FormControlLabel
+                value={TextType.ORIGINAL}
+                control={<Radio />}
+                label="Original"
+              />
+              <FormControlLabel
+                value={TextType.TRANSLATED}
+                control={<Radio />}
+                label="Translated"
+              />
+            </RadioGroup>
             <Button
               variant="contained"
               startIcon={<VerticalSplitIcon />}
               onClick={handleConvertAndReplaceButtonClick}
             >
               Convert
-            </Button>
-            <Button
-              variant="contained"
-              startIcon={<VerticalSplitIcon />}
-              onClick={handleConvertAndAddButtonClick}
-            >
-              Convert and add to the end
             </Button>
           </Box>
           <SentenceInputContainer
