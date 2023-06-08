@@ -11,7 +11,7 @@ import CreateExerciseDto from './dto/create-exercise.dto';
 import ExercisesService from './exercises.service';
 import { UpdateExerciseDto } from './dto/update-exercise.dto';
 
-@Controller('exercises')
+@Controller('/api/exercises')
 export default class ExercisesController {
   constructor(private readonly exercisesService: ExercisesService) {}
 
