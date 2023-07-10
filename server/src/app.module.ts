@@ -17,12 +17,6 @@ import { join } from 'path';
         const database = configService.get<string>('mongodbDatabase');
         const host = configService.get<string>('mongodbHost');
 
-        // // TODO: remove
-        // return {
-        //   uri: 'mongodb://localhost:27017/translateme',
-        //   dbName: database,
-        // };
-
         return {
           uri: `mongodb+srv://${username}:${password}@${host}`,
           dbName: database,
